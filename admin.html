@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - TechLanka Laptops</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* Additional admin-specific styles (can also be placed in style.css) */
+    .admin-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: var(--bg-card);
+      border-radius: var(--border-radius);
+      border: 1px solid var(--border-dim);
+    }
+    .admin-login, .admin-panel {
+      display: none;
+    }
+    .admin-login.active, .admin-panel.active {
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-dim);
+      border-radius: 8px;
+      color: white;
+      font-family: inherit;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .btn-block {
+      width: 100%;
+      margin-top: 1rem;
+    }
+    .laptop-list {
+      margin-top: 2rem;
+    }
+    .laptop-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem;
+      background: var(--bg-elevated);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+    .delete-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .delete-btn:hover {
+      background: #dc2626;
+    }
+    .message {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .message.success {
+      background: #10b981;
+      color: white;
+      display: block;
+    }
+    .message.error {
+      background: #ef4444;
+      color: white;
+      display: block;
+    }
+  </style>
+</head>
+<body class="dark-theme">
+  <header class="site-header">
+    <div class="container">
+      <div class="logo-area">
+        <a href="index.html" class="logo">TechLanka<span> Admin</span></a>
+      </div>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="gaming-laptops.html">Gaming</a></li>
+          <li><a href="student-laptops.html">Student</a></li>
+          <li><a href="business-laptops.html">Business</a></li>
+          <li><a href="admin.html" class="active">Admin</a></li>
+        </ul>
+      </nav>
+      <button class="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="admin-container">
+      <!-- Login Form -->
+      <div id="loginForm" class="admin-login active">
+        <h2>Admin Login</h2>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="password" placeholder="Enter admin password">
+        </div>
+        <button id="loginBtn" class="btn btn-primary btn-block">Login</button>
+        <p style="margin-top: 1rem; color: var(--text-secondary);">Use password: <strong>nadith123</strong></p>
+      </div>
+
+      <!-- Admin Panel (hidden until login) -->
+      <div id="adminPanel" class="admin-panel">
+        <h2>Add New Laptop</h2>
+        <div id="messageBox" class="message"></div>
+
+        <form id="addLaptopForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Laptop Name *</label>
+              <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+              <label>Price (LKR) *</label>
+              <input type="number" id="price" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Processor</label>
+              <input type="text" id="processor" value="Intel Core i5">
+            </div>
+            <div class="form-group">
+              <label>RAM</label>
+              <input type="text" id="ram" value="8GB DDR4">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Storage</label>
+              <input type="text" id="storage" value="512GB SSD">
+            </div>
+            <div class="form-group">
+              <label>GPU</label>
+              <input type="text" id="gpu" value="Integrated">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Display</label>
+              <input type="text" id="display" value="15.6 FHD">
+            </div>
+            <div class="form-group">
+              <label>Battery</label>
+              <input type="text" id="battery" value="45Wh, 7hrs">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Rating (0-5)</label>
+              <input type="number" id="rating" step="0.1" min="0" max="5" value="4.0">
+            </div>
+            <div class="form-group">
+              <label>Category *</label>
+              <select id="category" required>
+                <option value="gaming">Gaming</option>
+                <option value="student">Student</option>
+                <option value="business">Business</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Image URL (optional)</label>
+            <input type="url" id="image" placeholder="https://...">
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">Add Laptop</button>
+        </form>
+
+        <!-- List of added laptops -->
+        <div class="laptop-list">
+          <h3>Added Laptops</h3>
+          <div id="laptopListContainer"></div>
+        </div>
+
+        <button id="logoutBtn" class="btn btn-outline btn-block" style="margin-top: 1rem;">Logout</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 TechLanka Laptops. Admin panel.</p>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      // Password
+      const ADMIN_PASSWORD = 'nadith123';
+
+      // Elements
+      const loginForm = document.getElementById('loginForm');
+      const adminPanel = document.getElementById('adminPanel');
+      const passwordInput = document.getElementById('password');
+      const loginBtn = document.getElementById('loginBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const addForm = document.getElementById('addLaptopForm');
+      const messageBox = document.getElementById('messageBox');
+      const laptopListContainer = document.getElementById('laptopListContainer');
+
+      // Check if already logged in (sessionStorage)
+      if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+        loginForm.classList.remove('active');
+        adminPanel.classList.add('active');
+        loadLaptopList();
+      }
+
+      // Login
+      loginBtn.addEventListener('click', () => {
+        if (passwordInput.value === ADMIN_PASSWORD) {
+          sessionStorage.setItem('adminLoggedIn', 'true');
+          loginForm.classList.remove('active');
+          adminPanel.classList.add('active');
+          loadLaptopList();
+          passwordInput.value = '';
+        } else {
+          alert('Incorrect password');
+        }
+      });
+
+      // Logout
+      logoutBtn.addEventListener('click', () => {
+        sessionStorage.removeItem('adminLoggedIn');
+        adminPanel.classList.remove('active');
+        loginForm.classList.add('active');
+      });
+
+      // Load and display added laptops
+      function loadLaptopList() {
+        const laptops = JSON.parse(localStorage.getItem('techlanka_laptops')) || [];
+        if (laptops.length === 0) {
+          laptopListContainer.innerHTML = '<p>No laptops added yet.</p>';
+          return;
+        }
+
+        let html = '';
+        laptops.forEach((laptop, index) => {
+          html += `
+            <div class="laptop-list-item">
+              <div>
+                <strong>${laptop.name}</strong> (${laptop.category}) - LKR ${laptop.price}
+              </div>
+              <button class="delete-btn" data-index="${index}">Delete</button>
+            </div>
+          `;
+        });
+        laptopListContainer.innerHTML = html;
+
+        // Attach delete events
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const index = e.target.getAttribute('data-index');
+            deleteLaptop(index);
+          });
+        });
+      }
+
+      // Delete laptop
+      function deleteLaptop(index) {
+        let laptops = JSON.parse(localStorage.getItem('techlanka_laptops')) || [];
+        laptops.splice(index, 1);
+        localStorage.setItem('techlanka_laptops', JSON.stringify(laptops));
+        loadLaptopList();
+        showMessage('Laptop deleted successfully', 'success');
+      }
+
+      // Show message
+      function showMessage(text, type) {
+        messageBox.textContent = text;
+        messageBox.className = `message ${type}`;
+        setTimeout(() => {
+          messageBox.style.display = 'none';
+        }, 3000);
+      }
+
+      // Add laptop form submit
+      addForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        // Get values
+        const name = document.getElementById('name').value.trim();
+        const price = parseFloat(document.getElementById('price').value);
+        const processor = document.getElementById('processor').value.trim();
+        const ram = document.getElementById('ram').value.trim();
+        const storage = document.getElementById('storage').value.trim();
+        const gpu = document.getElementById('gpu').value.trim();
+        const display = document.getElementById('display').value.trim();
+        const battery = document.getElementById('battery').value.trim();
+        const rating = parseFloat(document.getElementById('rating').value);
+        const category = document.getElementById('category').value;
+        let image = document.getElementById('image').value.trim();
+        if (!image) {
+          // Default placeholder
+          image = `https://placehold.co/600x400/1e1e1e/3b82f6?text=${encodeURIComponent(name)}`;
+        }
+
+        if (!name || !price) {
+          showMessage('Name and Price are required', 'error');
+          return;
+        }
+
+        // Create laptop object
+        const newLaptop = {
+          id: Date.now(),
+          name,
+          price,
+          processor,
+          ram,
+          storage,
+          gpu,
+          display,
+          battery,
+          rating,
+          category,
+          image,
+          // For filtering
+          dataName: name,
+          dataPrice: price
+        };
+
+        // Save to localStorage
+        let laptops = JSON.parse(localStorage.getItem('techlanka_laptops')) || [];
+        laptops.push(newLaptop);
+        localStorage.setItem('techlanka_laptops', JSON.stringify(laptops));
+
+        // Clear form
+        addForm.reset();
+        showMessage('Laptop added successfully!', 'success');
+        loadLaptopList();
+      });
+    })();
+  </script>
+</body>
+</html>
